@@ -6,7 +6,19 @@ import io.netty.buffer.ByteBuf
 import zio.http.*
 import zio.http.model.{Headers, Method, Status}
 import zio.stream.{ZSink, ZStream}
-import zio.{Chunk, Clock, Duration, Hub, Schedule, Scope, Task, ZIO, durationInt, http}
+import zio.{
+  Chunk,
+  Clock,
+  Duration,
+  Hub,
+  Schedule,
+  Scope,
+  Task,
+  ZIO,
+  ZLayer,
+  durationInt,
+  http
+}
 
 import java.nio.ByteBuffer
 import java.util.concurrent.ArrayBlockingQueue
@@ -57,4 +69,9 @@ class StreamingRoutes(jokeBoxHandler: JokeBoxHandler) {
         )
       }
     }
+}
+
+object StreamingRoutes {
+  val live: ZLayer[JokeBoxHandler, Nothing, StreamingRoutes] =
+    ZLayer.fromZIO(ZIO.serviceWith[JokeBoxHandler](StreamingRoutes(_)))
 }

@@ -7,15 +7,22 @@ import zio.http.{Server, ServerConfig}
 object Main extends ZIOAppDefault {
   private val port = 8088
 
-  val jokeBoxHandler = new JokeBoxHandler(MusicProviders.mp3Provider("V:\\MusicPhotos\\music\\"))
+  private val musicApp = for {
+    routes <- ZIO.service[StreamingRoutes]
+    _      <- Server
+                .serve[Scope](routes.adminRoutes ++ routes.listenRoutes)
+                .provide(
+                    ServerConfig.live(ServerConfig.default.port(port)),
+                    Server.live,
+                    Scope.default
+                ).debug(s"Server is started on port:$port")
+  } yield ()
 
-  val routes = new StreamingRoutes(jokeBoxHandler)
-
-  val config1: ServerConfig = ServerConfig.default.port(port)
-  val config2: ServerConfig = ServerConfig.default.port(8089)
-
-  val run: ZIO[Any, Throwable, Nothing] = {
-    Server.serve[Scope](routes.adminRoutes++routes.listenRoutes).provide(ServerConfig.live(config1), Server.live, Scope.default)
-    //Server.serve(routes.listenRoutes).provide(ServerConfig.live(config2), Server.live)
-  }
+  val run: ZIO[Any, Throwable, Unit] =
+    musicApp
+      .provide(
+        StreamingRoutes.live,
+        ZLayer.succeed(MusicProviders.mp3Provider(MusicConf("V:\\MusicPhotos\\music\\"))),
+        JokeBoxHandler.live
+      )
 }

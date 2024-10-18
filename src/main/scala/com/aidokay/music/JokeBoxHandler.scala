@@ -3,6 +3,7 @@ package com.aidokay.music
 import com.aidokay.music.JokeBox.*
 import com.aidokay.music.JokeBoxData.JokeBoxContext
 import com.aidokay.music.tracks.AudioProvider
+import zio.{ZIO, ZLayer}
 
 class JokeBoxHandler(audioProvider: AudioProvider[String]) {
 
@@ -17,8 +18,10 @@ class JokeBoxHandler(audioProvider: AudioProvider[String]) {
         if (jokeBoxData.state() == Paused) return EMPTY_ARRAY
         jokeBoxData.currentTrack() match {
           case None =>
-            if (jokeBoxData.isEmpty) jokeBoxData.updateCurrentState(Paused)
-            else jokeBoxData.playNext()
+            if (jokeBoxData.isEmpty)
+              jokeBoxData.updateCurrentState(Paused)
+            else
+              jokeBoxData.playNext()
             EMPTY_ARRAY
           case Some(playing) =>
             if (playing.track.isDone && jokeBoxData.isEmpty) {
@@ -58,4 +61,9 @@ class JokeBoxHandler(audioProvider: AudioProvider[String]) {
   def asList(str: String): List[String] =
     str.split(",").toList
 
+}
+
+object JokeBoxHandler {
+  val live: ZLayer[AudioProvider[String], Nothing, JokeBoxHandler] =
+    ZLayer.fromZIO(ZIO.serviceWith[AudioProvider[String]](JokeBoxHandler(_)))
 }
