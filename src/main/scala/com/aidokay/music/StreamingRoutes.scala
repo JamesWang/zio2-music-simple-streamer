@@ -6,6 +6,8 @@ import io.netty.buffer.ByteBuf
 import zio.http.*
 import zio.http.model.{Headers, Method, Status}
 import zio.stream.{ZSink, ZStream}
+import zio.direct.defer
+import zio.direct.run
 import zio.{
   Chunk,
   Clock,
@@ -73,5 +75,7 @@ class StreamingRoutes(jokeBoxHandler: JokeBoxHandler) {
 
 object StreamingRoutes {
   val live: ZLayer[JokeBoxHandler, Nothing, StreamingRoutes] =
-    ZLayer.fromZIO(ZIO.serviceWith[JokeBoxHandler](StreamingRoutes(_)))
+    ZLayer.fromZIO:
+      defer:
+        StreamingRoutes(ZIO.service[JokeBoxHandler].run)
 }
