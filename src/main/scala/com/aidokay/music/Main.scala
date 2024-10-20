@@ -22,7 +22,8 @@ object Main extends ZIOAppDefault {
     musicApp
       .provide(
         StreamingRoutes.live,
-        ZLayer.succeed(MusicProviders.mp3Provider(MusicConf("V:\\MusicPhotos\\music\\"))),
+        ZLayer.succeed(MusicConf("V:\\MusicPhotos\\music\\")),
+        MusicProviders.mp3,
         JokeBoxHandler.live
       )
 }

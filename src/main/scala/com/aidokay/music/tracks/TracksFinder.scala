@@ -1,5 +1,7 @@
 package com.aidokay.music.tracks
 
+import zio.ZIO
+
 import java.io.File
 
 object TracksFinder {
@@ -30,5 +32,5 @@ object TracksFinder {
     override def load(loc: String): List[O] = listOfFiles(new File(loc))
   }
 
-  val map3FileFinder = new TrackFileLoader(new MusicFileFilter())
+  val map3FileFinder: () => TrackFileLoader = () => new TrackFileLoader(new MusicFileFilter())
 }

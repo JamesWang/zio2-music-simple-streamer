@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "dev.zio" %% "zio" % zioVersion,
   "dev.zio" %% "zio-streams" % zioVersion,
   "dev.zio" %% "zio-http" % "0.0.5",
+  "dev.zio" %% "zio-direct" % "1.0.0-RC7",
   "org.apache.tika" % "tika-core" % "2.9.2",
 //  "org.apache.tika" % "tika-parsers" % "2.6.0" pomOnly(),
   "org.apache.tika" % "tika-parsers-standard-package" % "2.9.2",
